@@ -2,7 +2,6 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 var seriesOptions = [],
     seriesCounter = 0,
     names = ['MSFT', 'AAPL', 'GOOG'];
-declare var JQuery:any;
 declare var Highcharts:any;
 @Component({
     selector: 'chart',
