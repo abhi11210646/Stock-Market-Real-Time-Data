@@ -1,8 +1,8 @@
-var stockcontroller = require('./controllers/stockController');
 var path = require("path");
 require("dotenv").config();
 require('./db')();
 require('./model/stock');
+var stockcontroller = require('./controllers/stockController');
 var bodyparser = require('body-parser');
 var express = require("express");
 var app = express();
