@@ -4,6 +4,7 @@ var seriesOptions = [],
     seriesCounter = 0,
     names = ['MSFT', 'AAPL', 'GOOG'];
 declare var Highcharts: any;
+const webSocket = new WebSocket('ws://localhost:4321/api/');
 @Component({
     selector: 'chart',
     templateUrl: './chart.template.html'
@@ -17,21 +18,19 @@ export class ChartComponent implements OnInit, AfterViewInit {
         //
     }
     ngAfterViewInit() {
-        this._StockService.getAllData().subscribe((response) => {
-            console.log('-->', response);
-        }, (error) => {
-                console.log('khemu--->', error);
-        }
-        );
-        seriesOptions[0] = {
-            name: 'aaap',
-            data: [1, 2, 3, 4, 5, 6, 7]
+        webSocket.onopen = (event) => {
+            webSocket.send('GET_ALL_DATA');
         };
-        seriesOptions[1] = {
-            name: 'hUM',
-            data: [10, 20, 30, 40, 50, 60, 70]
+        webSocket.onerror = (error) => {
+            console.log('error', error);
         };
-        createChart();
+        webSocket.onmessage = (stockData) => {
+            seriesOptions.push(JSON.parse(stockData.data));
+            createChart();
+        };
+        webSocket.onclose = () => {
+            console.log('connection closed');
+        };
 
     }
 }
