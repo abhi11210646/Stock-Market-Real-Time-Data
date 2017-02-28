@@ -5,13 +5,10 @@ import {Component } from '@angular/core';
     templateUrl: './stock.template.html'
 })
 export class StockComponent {
-    stock_code:string = '';
-    stock_metadata = [];
+
+    stock_metadata = [{name:"fb", desc:"facebook inc."}];
     constructor() {
         console.log("yoyo in stock ke mohalla");
     }
-    getSockData(event:any) {
-        event.preventDefault();
-        this.stock_metadata.push({name:"abhi", desc:"yoyo"});
-    }
+    
 }
