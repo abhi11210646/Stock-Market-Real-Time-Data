@@ -1,6 +1,14 @@
-<div class = "top">
-<chart></chart>
-<div class="stock"> 
-  <stock></stock>
+<div class="top">
+    <chart></chart>
 </div>
+<div>
+    <div class="stock">
+        <stock></stock>
+    </div>
+    <div>
+        <form (ngSubmit)="getSockData($event)">
+            <input type="text" placeholder="Stock Market Code" name="stock_code" [(ngModel)]="stock_code">
+            <button> submit </button>
+        </form>
+    </div>
 </div>

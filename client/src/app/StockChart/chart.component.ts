@@ -17,14 +17,14 @@ export class ChartComponent implements OnInit, AfterViewInit {
     }
     ngAfterViewInit() {
         webSocket.onopen = (event) => {
-            webSocket.send('NEW_STOCK');
+            webSocket.send('GET_ALL_STOCK');
         };
         webSocket.onerror = (error) => {
             console.log('error', error);
              webSocket.close();
         };
         webSocket.onmessage = (stockData) => {
-            seriesOptions.push(JSON.parse(stockData.data));
+            seriesOptions = seriesOptions.concat(JSON.parse(stockData.data));
             createChart();
         };
         webSocket.onclose = () => {
