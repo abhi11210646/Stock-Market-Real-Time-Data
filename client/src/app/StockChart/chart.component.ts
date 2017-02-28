@@ -1,8 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { StockService } from './../service/stockService.service';
-var seriesOptions = [],
-    seriesCounter = 0,
-    names = ['MSFT', 'AAPL', 'GOOG'];
+var seriesOptions = [];
 declare var Highcharts: any;
 const webSocket = new WebSocket('ws://localhost:4321/api/');
 @Component({
@@ -19,10 +17,11 @@ export class ChartComponent implements OnInit, AfterViewInit {
     }
     ngAfterViewInit() {
         webSocket.onopen = (event) => {
-            webSocket.send('GET_ALL_DATA');
+            webSocket.send('NEW_STOCK');
         };
         webSocket.onerror = (error) => {
             console.log('error', error);
+             webSocket.close();
         };
         webSocket.onmessage = (stockData) => {
             seriesOptions.push(JSON.parse(stockData.data));

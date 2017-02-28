@@ -5,8 +5,18 @@ const stockSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    desc: {
+        type: String,
+        trim: true
+    },
     data: {
         type: Array
+    },
+    start_date: {
+        type: Date
+    },
+    end_date: {
+        type: Date
     }
 });
 

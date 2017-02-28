@@ -1,1 +1,14 @@
-<h1>stock </h1>
+<div style="width:100%; min-height:30px">
+    <div *ngIf="stock_metadata.length">
+        <div *ngFor="let metadata of stock_metadata">
+            <span> {{ metadata.name }}</span>
+            <p> {{ metadata.desc }} </p>
+        </div>
+    </div>
+    <div>
+        <form (ngSubmit)="getSockData($event)">
+            <input type="text" placeholder="Stock Market Code" name="stock_code" [(ngModel)]="stock_code">
+            <button> submit </button>
+        </form>
+    </div>
+</div>
