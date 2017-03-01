@@ -1,17 +1,36 @@
-import { Component } from '@angular/core';
-
+import { Component, AfterViewInit } from '@angular/core';
+const webSocket = new WebSocket('ws://localhost:4321/api/');
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  stock_code:string = '';
+
+export class AppComponent implements AfterViewInit {
+  seriesOptions = [];
+  stock_code: string = '';
   constructor() {
     //
   }
-  getSockData(event:any) {
-        event.preventDefault();
-        // this.stock_metadata.push({name:"abhi", desc:"yoyo"});
-    }
+  ngAfterViewInit() {
+    webSocket.onopen = (event) => {
+      webSocket.send(JSON.stringify({ stock: '', action: 'GET_ALL_STOCK' }));
+    };
+    webSocket.onerror = (error) => {
+      console.log('error', error);
+      webSocket.close();
+    };
+    webSocket.onmessage = (stockData) => {
+      this.seriesOptions = [];
+      this.seriesOptions = this.seriesOptions.concat(JSON.parse(stockData.data));
+    };
+    webSocket.onclose = () => {
+      console.log('connection closed');
+    };
+  }
+  getSockData(event: any) {
+    event.preventDefault();
+    webSocket.send(JSON.stringify({ stock: this.stock_code, action: 'NEW_STOCK' }));
+    // this.stock_metadata.push({name:"abhi", desc:"yoyo"});
+  }
 }
