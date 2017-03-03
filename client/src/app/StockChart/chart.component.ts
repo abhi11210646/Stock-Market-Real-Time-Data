@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { StockService } from './../service/stockService.service';
 
 declare var Highcharts: any;
@@ -8,20 +8,20 @@ declare var Highcharts: any;
     templateUrl: './chart.template.html'
 })
 
-export class ChartComponent implements OnInit, AfterViewInit, OnChanges {
+export class ChartComponent implements OnInit, OnChanges {
     @Input() seriesOptions;
     constructor(private _StockService: StockService) {
         console.log("yoyo in chart ke mohalla");
     }
+
     ngOnInit() {
-        console.log("seriesOptions-------->>>",this.seriesOptions);
+
         this.createChart();
+
     }
-    ngAfterViewInit() {
-        //
-    }
+
     ngOnChanges(changes: SimpleChanges) {
-        console.log("gal te sun le");
+        console.log('change detection',this.seriesOptions);
         this.createChart();
     }
 
