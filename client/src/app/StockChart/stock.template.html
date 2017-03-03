@@ -1,9 +1,8 @@
-<div style="width:100%; min-height:30px">
-    <div *ngIf="stock_metadata.length">
-        <div *ngFor="let metadata of stock_metadata">
-            <span> {{ metadata.name }}</span>
-            <p> {{ metadata.desc }} </p>
-        </div>
+<div class="jumbotron">
+    <div *ngIf="metadata != {}">
+        <p> {{ metadata.name }}
+            <span style="float:right;cursor:pointer" (click)="delete(metadata)" class="glyphicon glyphicon-remove"></span>
+        </p>
+        <span> {{ metadata.desc }} </span>
     </div>
-    
 </div>

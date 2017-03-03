@@ -4,51 +4,58 @@ const Promise = require('bluebird');
 const Stock = require('mongoose').model('Stock');
 const got = require('got');
 const base_url = 'https://www.quandl.com/api/v3/datasets/WIKI/', stock_name = '';
-var series_data = [];
 module.exports = {
 
     StockData: (ws, req) => {
+        let series_data = [];
         ws.on('message', (msg) => {
-           
+
             msg = JSON.parse(msg);
             if (msg.action == 'NEW_STOCK') {
-                console.log(msg);
+
                 getStock(ws, [msg.stock.toUpperCase()]).then((dataset) => {
-                    // return series_data;
-                    let stock = new Stock({
-                        name: dataset.dataset_code.toLowerCase(),
-                        desc: dataset.name
-                    });
-                    stock.save();
-                    let series = {
-                        name: dataset.dataset_code,
-                        data: dataset.data
+                    if (dataset) {
+                        let series = {
+                            name: dataset.dataset_code.toUpperCase(),
+                            data: dataset.data,
+                            desc: stockk.desc
+                        }
+                        series_data.push(series);
+                        ws.send(JSON.stringify(series_data));
+                        let stock = new Stock({
+                            name: dataset.dataset_code.toUpperCase(),
+                            desc: dataset.name,
+                            data: dataset.data
+                        });
+                        Stock.find({ name: msg.stock }).then((stockk) => {
+                            if (!stockk.length) {
+                                stock.save();
+                            }
+                        });
+                    }else {
+                        throw new Error('not found');
                     }
-                    series_data.push(series);
-                    ws.send(JSON.stringify(series_data));
+                }).catch((error) => {
+                    ws.send(JSON.stringify([]));
                 });
             } else if (msg.action == 'GET_ALL_STOCK') {
-                Stock.find({}, { _id: 0 }).select('name').then((stocks) => {
-                    stocks.forEach((stock) => {
-                        getStock(ws, [stock.name.toUpperCase()])
-                            .then((dataset) => {
-                                // return series_data;
-                                let series = {
-                                    name: dataset.dataset_code,
-                                    data: dataset.data
-                                }
-                                series_data.push(series);
-                                ws.send(JSON.stringify(series_data));
-                            });
+                Stock.find({}, { _id: 0 }).then((stocks) => {
+                    stocks.forEach((stockk) => {
+                        let series = {
+                            name: stockk.name,
+                            data: stockk.data,
+                            desc: stockk.desc
+                        }
+                        series_data.push(series);
                     });
-
+                    ws.send(JSON.stringify(series_data));
                 }).catch((error) => {
                     console.log(error);
                     return error;
                 });
             } else {
                 if (msg.action == 'DELETE') {
-                    Stock.remove({ name: msg.stock });
+                    Stock.remove({ name: msg.stock.toUpperCase() }).exec();
                 }
             }
         });
@@ -76,7 +83,7 @@ function getStock(ws, stock) {
         }
     ).catch(
         (error) => {
-            console.log(error);
+            console.log('got error-->>',error);
             return error;
         }
         );
