@@ -10,19 +10,24 @@ export class AppComponent implements AfterViewInit {
   seriesOptions = [];
   stock_code: string = '';
   constructor() {
-    //
-  }
-  ngAfterViewInit() {
+
     webSocket.onopen = (event) => {
       webSocket.send(JSON.stringify({ stock: '', action: 'GET_ALL_STOCK' }));
     };
+    webSocket.onmessage = (stockData) => {
+      let parsedData = JSON.parse(stockData.data);
+      if (parsedData.length) {
+        this.seriesOptions = [];
+        this.seriesOptions = this.seriesOptions.concat(parsedData);
+      }
+    };
+  }
+  ngAfterViewInit() {
+
     webSocket.onerror = (error) => {
       console.log('error', error);
       webSocket.close();
-    };
-    webSocket.onmessage = (stockData) => {
-      this.seriesOptions = [];
-      this.seriesOptions = this.seriesOptions.concat(JSON.parse(stockData.data));
+
     };
     webSocket.onclose = () => {
       console.log('connection closed');
@@ -31,6 +36,11 @@ export class AppComponent implements AfterViewInit {
   getSockData(event: any) {
     event.preventDefault();
     webSocket.send(JSON.stringify({ stock: this.stock_code, action: 'NEW_STOCK' }));
-    // this.stock_metadata.push({name:"abhi", desc:"yoyo"});
+
+  }
+  delete(metadata: string) {
+    this.seriesOptions.splice(this.seriesOptions.indexOf(metadata), 1);
+    this.seriesOptions = this.seriesOptions;
+    console.log(this.seriesOptions);
   }
 }

@@ -8,5 +8,8 @@ module.exports = () => {
     mongoose.connection.on('connected', ()=>{
         console.log('Database Connection Establised');
     });
+    mongoose.connection.on('error', (err)=>{
+        console.log('Database Connection error',err);
+    });
 
 };

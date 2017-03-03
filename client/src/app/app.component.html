@@ -1,14 +1,23 @@
 <div class="top">
     <chart [seriesOptions]="seriesOptions"></chart>
 </div>
-<div>
-    <div class="stock">
-        <stock></stock>
-    </div>
-    <div>
-        <form (ngSubmit)="getSockData($event)">
-            <input type="text" placeholder="Stock Market Code" name="stock_code" [(ngModel)]="stock_code">
-            <button> submit </button>
-        </form>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4" *ngFor="let metadata of seriesOptions">
+            <stock [metadata]="metadata" (control)="delete($event)"></stock>
+        </div>
+        <div class="col-md-4">
+            <div class="jumbotron">
+                 <p> Add Stock </p>
+                <form class="form-inline" (ngSubmit)="getSockData($event)">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" placeholder="Stock Market Code" class="form-control" name="stock_code" [(ngModel)]="stock_code" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">submit</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
