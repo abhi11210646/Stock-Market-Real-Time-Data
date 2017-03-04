@@ -1,5 +1,5 @@
 import { Component, AfterViewInit } from '@angular/core';
-const webSocket = new WebSocket('ws://localhost:4321/api/');
+const webSocket = new WebSocket('wss://stock-market-real-time-data-abhishek-singh.c9users.io/api/');
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
