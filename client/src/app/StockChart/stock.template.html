@@ -3,6 +3,7 @@
         <p> {{ metadata.name }}
             <span style="float:right;cursor:pointer" (click)="delete(metadata)" class="glyphicon glyphicon-remove"></span>
         </p>
-        <span> {{ metadata.desc }} </span>
+        <span> {{ metadata.desc }} </span><br>
+        <span style = "color: darkred" id="error_stock" class="hide"> Can't delete last Stock. </span>
     </div>
 </div>
