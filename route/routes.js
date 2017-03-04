@@ -1,13 +1,12 @@
-var app = require('./../init')();
-const webSocket = require('./../webSocket')(app);
+var router = require('express').Router();
 var qs = require('query-string');
 const Promise = require('bluebird');
 const Stock = require('mongoose').model('Stock');
 const got = require('got');
 const base_url = 'https://www.quandl.com/api/v3/datasets/WIKI/', stock_name = '';
-module.exports = {
+module.exports = (websockets) => {
+    router.ws('/', (ws, req) => {
 
-    StockData: (ws, req, websockets) => {
         let series_data = [];
         ws.on('message', (msg) => {
             console.log(msg)
@@ -33,10 +32,10 @@ module.exports = {
                                 desc: dataset.name
                             }
                             series_data.push(series);
-                            webSocket.getWss().clients.forEach((client) => {
+
+                            websockets.getWss().clients.forEach((client) => {
                                 client.send(JSON.stringify(series_data));
                             });
-                            // ws.send(JSON.stringify(series_data));
                         }).catch((error) => {
                             console.log('i think got error---->>', error);
                             ws.send(JSON.stringify([]));
@@ -49,21 +48,19 @@ module.exports = {
                     ws.send(JSON.stringify([]));
                 });
             } else if (msg.action == 'GET_ALL_STOCK') {
-                getAllStock(series_data, ws);
+                getAllStock(series_data, ws, websockets);
             } else {
                 if (msg.action == 'DELETE') {
                     Stock.remove({ name: msg.stock.toUpperCase() }).exec();
                     series_data = [];
-                    getAllStock(series_data, ws);
+                    getAllStock(series_data, ws, websockets);
                 }
             }
         });
-    }
-
-
+    });
+    return router;
 }
-function getAllStock(series_data, ws) {
-    console.log('getAllStock', series_data);
+function getAllStock(series_data, ws, websockets) {
     Stock.find({}, { _id: 0 }).then((stocks) => {
         stocks.forEach((stockk) => {
             let series = {
@@ -73,9 +70,7 @@ function getAllStock(series_data, ws) {
             }
             series_data.push(series);
         });
-        console.log("webSocket.getWss().clients",webSocket.getWss().clients);
-        webSocket.getWss().clients.forEach((client) => {
-              console.log("webSock",client);
+        websockets.getWss().clients.forEach((client) => {
             client.send(JSON.stringify(series_data));
         });
     }).catch((error) => {
@@ -101,3 +96,6 @@ function parseTheData(dataset) {
         return stock;
     });
 }
+
+
+
