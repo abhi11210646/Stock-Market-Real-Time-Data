@@ -1,3 +1,4 @@
+<div *ngIf="seriesOptions.length">
 <div class="top">
     <chart [seriesOptions]="seriesOptions"></chart>
 </div>
@@ -8,16 +9,19 @@
         </div>
         <div class="col-md-4">
             <div class="jumbotron">
-                 <p> Add Stock </p>
-                <form class="form-inline" (ngSubmit)="getSockData($event)">
+                <p> Add Stock </p>
+                <form class="form-inline" (ngSubmit)="addSockData($event)">
                     <div class="form-group">
                         <div class="input-group">
                             <input type="text" placeholder="Stock Market Code" class="form-control" name="stock_code" [(ngModel)]="stock_code" required>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">submit</button>
+                    <br>
+                    <span style="color: darkred" *ngIf="showerror" id="error_not_found"> Stock not found or Stock already exists </span>
                 </form>
             </div>
         </div>
     </div>
+</div>
 </div>

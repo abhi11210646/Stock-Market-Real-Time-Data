@@ -9,16 +9,20 @@ const webSocket = new WebSocket('ws://localhost:4321/api/');
 export class AppComponent implements AfterViewInit {
   seriesOptions = [];
   stock_code: string = '';
+  showerror:boolean = false;
   constructor() {
-
+    console.log("webSocket--------->>",webSocket)
     webSocket.onopen = (event) => {
       webSocket.send(JSON.stringify({ stock: '', action: 'GET_ALL_STOCK' }));
     };
     webSocket.onmessage = (stockData) => {
       let parsedData = JSON.parse(stockData.data);
       if (parsedData.length) {
+         this.showerror = false;
         this.seriesOptions = [];
         this.seriesOptions = this.seriesOptions.concat(parsedData);
+      }else {
+        this.showerror = true;
       }
     };
   }
@@ -33,14 +37,17 @@ export class AppComponent implements AfterViewInit {
       console.log('connection closed');
     };
   }
-  getSockData(event: any) {
+  addSockData(event: any) {
     event.preventDefault();
     webSocket.send(JSON.stringify({ stock: this.stock_code, action: 'NEW_STOCK' }));
 
   }
-  delete(metadata: string) {
-    this.seriesOptions.splice(this.seriesOptions.indexOf(metadata), 1);
-    this.seriesOptions = this.seriesOptions;
-    console.log(this.seriesOptions);
+  delete(metadata: any) {
+    if (this.seriesOptions.length > 1) {
+       webSocket.send(JSON.stringify({ stock: metadata.name, action: 'DELETE' }));
+      this.seriesOptions.splice(this.seriesOptions.indexOf(metadata), 1);
+    }else {
+      document.getElementById('error_stock').setAttribute('class', 'show');
+    }
   }
 }
