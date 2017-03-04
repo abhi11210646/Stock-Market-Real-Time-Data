@@ -11,7 +11,7 @@ export class StockComponent implements OnInit {
         //
     }
     ngOnInit() {
-        console.log("yoyo in stock ke mohalla", this.metadata);
+        // console.log("yoyo in stock ke mohalla", this.metadata);
     }
     delete(name) {
         this.control.emit(name);

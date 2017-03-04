@@ -19,6 +19,9 @@ module.exports = (websockets) => {
                             console.log(msg.stock);
                             let dataset = JSON.parse(response.body).dataset,
                                 data = parseTheData(dataset.data);
+                                data.sort((currDate, nxtDate)=>{
+                                    return currDate[0]-nxtDate[0];
+                                });
                             dataset.data = data;
                             let stock = new Stock({
                                 name: dataset.dataset_code.toUpperCase(),

@@ -6,7 +6,7 @@ import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import { StockComponent } from './StockChart/stock.component';
 import { ChartComponent } from './StockChart/chart.component';
-import { StockService } from './service/stockService.service';
+
 @NgModule({
   declarations: [
     AppComponent, StockComponent, ChartComponent
@@ -19,7 +19,7 @@ import { StockService } from './service/stockService.service';
   exports: [
     StockComponent, ChartComponent
   ],
-  providers: [StockService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

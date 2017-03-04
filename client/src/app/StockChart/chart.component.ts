@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { StockService } from './../service/stockService.service';
 
 declare var Highcharts: any;
 
@@ -10,8 +9,8 @@ declare var Highcharts: any;
 
 export class ChartComponent implements OnInit, OnChanges {
     @Input() seriesOptions;
-    constructor(private _StockService: StockService) {
-        console.log("yoyo in chart ke mohalla");
+    constructor() {
+        // console.log("yoyo in chart ke mohalla");
     }
 
     ngOnInit() {
@@ -21,7 +20,7 @@ export class ChartComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        console.log('change detection',this.seriesOptions);
+        // console.log('change detection',this.seriesOptions);
         this.createChart();
     }
 

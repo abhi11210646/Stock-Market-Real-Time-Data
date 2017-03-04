@@ -11,7 +11,7 @@ export class AppComponent implements AfterViewInit {
   stock_code: string = '';
   showerror:boolean = false;
   constructor() {
-    console.log("webSocket--------->>",webSocket)
+    // console.log("webSocket--------->>",webSocket)
     webSocket.onopen = (event) => {
       webSocket.send(JSON.stringify({ stock: '', action: 'GET_ALL_STOCK' }));
     };
