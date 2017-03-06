@@ -15,6 +15,9 @@ const stockSchema = new mongoose.Schema({
         type: String,
         trim: true
 
+    },
+    refreshed_at: {
+        type: Date
     }
 
 });
