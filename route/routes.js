@@ -12,7 +12,7 @@ module.exports = (websockets) => {
             console.log(msg)
             msg = JSON.parse(msg);
             if (msg.action == 'NEW_STOCK') {
-                Stock.find({ name: msg.stock }).then((stockk) => {
+                Stock.find({ name: msg.stock.toUpperCase() }).then((stockk) => {
                     if (!stockk.length) {
 
                         makeRequest(ws, [msg.stock.toUpperCase()]).then((response) => {
@@ -44,7 +44,7 @@ module.exports = (websockets) => {
                             ws.send(JSON.stringify([]));
                         });
                     } else {
-                        throw new Error();
+                        throw new Error('Already Exists');
                     }
                 }).catch((error) => {
                     console.log('mongoose error---->>', error);
