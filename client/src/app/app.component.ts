@@ -4,7 +4,7 @@ const webSocket = new WebSocket(environment.API);
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./../assets/style.css']
 })
 
 export class AppComponent implements AfterViewInit {

@@ -10,12 +10,21 @@
     crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
   <script src="./assets/highcharts/highstock.js"></script>
+  <link href ="./assets/style.css" rel="stylesheet">
   <script src="./assets/highcharts/modules/exporting.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body>
-  <app-root>Loading...</app-root>
+  <app-root><div id="loading" *ngIf="!seriesOptions.length">
+    <div id="loading-center">
+        <div id="loading-center-absolute">
+            <div class="object" id="object_one"></div>
+            <div class="object" id="object_two"></div>
+            <div class="object" id="object_three"></div>
+        </div>
+    </div>
+</div></app-root>
 </body>
 </html>
