@@ -23,17 +23,14 @@ module.exports = (websockets) => {
                                     return currDate[0]-nxtDate[0];
                                 });
                             dataset.data = data;
-                            let stock = new Stock({
-                                name: dataset.dataset_code.toUpperCase(),
-                                desc: dataset.name,
-                                data: dataset.data
-                            });
-                            stock.save();
-                            let series = {
+                             let series = {
                                 name: dataset.dataset_code.toUpperCase(),
                                 data: dataset.data,
                                 desc: dataset.name
                             }
+                            let stock = new Stock(series);
+                            stock.save();
+                           
                             series_data.push(series);
 
                             websockets.getWss().clients.forEach((client) => {
