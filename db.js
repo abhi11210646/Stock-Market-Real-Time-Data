@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+mongoose.Promise=require('bluebird');
 module.exports = () => {
      var options = {socketOptions : { keepAlive: 1200 }};
     mongoose.connect(process.env.DB_test, options, (err)=>{

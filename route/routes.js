@@ -1,4 +1,5 @@
 var router = require('express').Router();
+const moment = require('moment');
 var qs = require('query-string');
 const Promise = require('bluebird');
 const Stock = require('mongoose').model('Stock');
@@ -36,63 +37,75 @@ module.exports = (websockets) => {
 };
 
 function newStock(series_data, msg, websockets, ws)  {
-    makeRequest(msg.stock.toUpperCase()).then((response) => {
-                let series = saveStockReturnSeriesObject(response);
-                series_data.push(series);
-                websockets.getWss().clients.forEach((client) => {
-                    client.send(JSON.stringify(series_data));
-                });
-        }).catch((error) => {
-                console.log('i think got error---->>', error);
-                ws.send(JSON.stringify([]));
+    Promise.coroutine(function *(){
+         let response = yield makeRequest(msg.stock.toUpperCase());
+        let series = yield saveStockReturnSeriesObject(response);
+        series_data.push(series);
+        return series_data;
+    }).apply(this).then((series_data)=>{
+        websockets.getWss().clients.forEach(
+            (client) => {
+                client.send(JSON.stringify(series_data));
             });
+    }).catch((error)=>{
+         console.log('i think got error---->>', error);
+         ws.send(JSON.stringify([]));
+    });
+
 }
 function saveStockReturnSeriesObject(response){
-    let dataset = generalizeResponse(response);
-        let series =  {
-            name: dataset.dataset_code.toUpperCase(),
-            data: dataset.data,
-            desc: dataset.name,
-            refreshed_at: dataset.refreshed_at
-        };
-        Stock.find({ name:dataset.dataset_code.toUpperCase()}).then((stockk) => {
-            if(stockk.length) {
-                console.log(stockk.name, " updated.");
-                 Stock.remove({ name: stockk.name.toUpperCase() }).exec();
-            }
-            let stock = new Stock(series);
-            stock.save();
-        }).catch((err)=>{
-            return err;
-        });
-        return series;
+    return new Promise((resolve, reject)=>{
+         let dataset = generalizeResponse(response);
+            let series =  {
+                name: dataset.dataset_code.toUpperCase(),
+                data: dataset.data,
+                desc: dataset.name,
+                refreshed_at: dataset.refreshed_at
+            };
+            Stock.find({ name:dataset.dataset_code.toUpperCase()}).then((stockk) => {
+                if(stockk.length) {
+                    console.log(stockk[0].name, " updated.");
+                     Stock.remove({ name: stockk.name.toUpperCase() }).exec();
+                }
+                let stock = new Stock(series);
+                stock.save();
+            }).catch((err)=>{
+                reject(err);
+            });
+         resolve(series);
+    });
+   
+       
 }
 function getAllStock(series_data, websockets) {
-    Stock.find({}, { _id: 0 }).then((stocks) => {
-        
-        stocks.forEach((stockk) => {
-            if(new Date(stockk.refreshed_at).getTime() < new Date().getTime()) {
-                    let series = {
+      
+      Promise.coroutine(function *(){
+         let stocks = yield Stock.find({}, { _id: 0 });
+          for(let stockk of stocks) {
+            if((moment().diff(moment(stockk.refreshed_at), 'minutes'))>1430) {
+                console.log('updating....',stockk.name, 'stock');
+                let response = yield makeRequest(stockk.name.toUpperCase());
+                let series = yield saveStockReturnSeriesObject(response);
+                series_data.push(series);
+              
+            }else {
+                   console.log('getting....',stockk.name, 'stock');
+                let series = {
                         name: stockk.name,
                         data: stockk.data,
                         desc: stockk.desc
                     };
                     series_data.push(series);
-            }else {
-                 makeRequest(stockk.name.toUpperCase()).then((response) => {
-                        let series = saveStockReturnSeriesObject(response);
-                        series_data.push(series);
-                });
             }
             
-        });
-        websockets.getWss().clients.forEach((client) => {
+        }
+         return series_data;
+      }).apply(this).then(()=>{
+          websockets.getWss().clients.forEach((client) => {
             client.send(JSON.stringify(series_data));
         });
-    }).catch((error) => {
-        console.log(error);
-        return error;
-    });
+      });
+        
 }
 function makeRequest(stock) {
     let date = new Date(), year = date.getFullYear(), month = date.getMonth() + 1, day = date.getDate();
