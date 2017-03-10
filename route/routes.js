@@ -65,7 +65,7 @@ function saveStockReturnSeriesObject(response){
             Stock.find({ name:dataset.dataset_code.toUpperCase()}).then((stockk) => {
                 if(stockk.length) {
                     console.log(stockk[0].name, " updated.");
-                     Stock.remove({ name: stockk.name.toUpperCase() }).exec();
+                     Stock.remove({ name: stockk[0].name.toUpperCase() }).exec();
                 }
                 let stock = new Stock(series);
                 stock.save();
